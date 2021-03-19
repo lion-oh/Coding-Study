@@ -1,20 +1,15 @@
-# Coding-Study Day 8
-* Date: 2021.03.12 14:00 ~ 15:00
+# Coding-Study Day 9
+* Date: 2021.03.19 13:00 ~ 14:00
 * Author: HR
 
-## Type: Sorting & Stack/que
-### Question1 ★★: 메뉴 리뉴얼(o). 
-- 끝.
-
-### Question2 ★★★: 섬 연결하기(x)
-- HR: greedy 방법으로 적은 비용부터 순차적으로 처리. score: 37.5/100  
-→ 문제 오답: 위의 알고리즘으로 접근했을 때, 해당안되는 예시들이 존재.  
-→ 해결 방법: 최솟값 중복 문제(np.argmin은 제일 먼저 오는 인덱스를 출력) 처리.  
-  
+## Type: DFS / BFS
+### Question1 ★★: 타겟 넘버(o). 
+- HR: 주어진 numbers의 합에서 각 원소의 조합만큼 빼주고 동시에 target 값과 비교해 나아간다.
+- 다르 풀이: DFS/BFS를 이용한 풀이.
 
 ### 
 ## 새롭게 알게된 사실
-01.
+01. DFS/BFS 알고리즘 구추 시, stop condition은 상단에 위치 시켜 놓는 것이 일반적.   
 
 ### 
 ## 고민해볼것!
