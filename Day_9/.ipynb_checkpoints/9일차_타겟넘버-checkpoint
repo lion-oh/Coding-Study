@@ -1,0 +1,623 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "attempted-account",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "iraqi-dollar",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 조건1: n개의 음이 아닌 정수.\n",
+    "# 조건2: DFS / BFS 알고리즘 문제 유형임."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "varying-hands",
+   "metadata": {},
+   "source": [
+    "## DFS란?"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "alert-annotation",
+   "metadata": {},
+   "source": [
+    "- 깊이 우선 탐색이라고 함  \n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "southeast-bidder",
+   "metadata": {},
+   "source": [
+    "- 그래프??  \n",
+    "Node와 edge로 표현됨. 그래프 탐색이란 하나의 노드를 시작으로 다수의 노드를 방문하는 것을 말함.  \n",
+    "두 node가 edge로 연결되어 있다면 '두 node는 인접하다'라고 표현 함.  "
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "departmental-poland",
+   "metadata": {},
+   "source": [
+    "**인접 행렬**: 2차원 배열로 그래프의 연결 관계를 표현하는 방식.  \n",
+    "**인접 리스트**: 리스트로 그래프의 연결 관계를 표현하는 방식.  "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "cosmetic-courtesy",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[[0, 7, 5], [7, 0, 9999999], [5, 9999999, 0]]\n"
+     ]
+    }
+   ],
+   "source": [
+    "# 인접 행렬 방식\n",
+    "## 2차원 배열에 각 노드가 연결된 형태를 기록하는 방식\n",
+    "\n",
+    "INF = 9999999\n",
+    "\n",
+    "graph = [\n",
+    "    [0, 7, 5],\n",
+    "    [7,0, INF],\n",
+    "    [5, INF, 0]\n",
+    "]\n",
+    "\n",
+    "print(graph)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "decent-greeting",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "[[(1, 7), (2, 5)], [(0, 7)], [(0, 5)]]\n"
+     ]
+    }
+   ],
+   "source": [
+    "# 인접 리스트 방식\n",
+    "## 모든 노드에 연결된 노드에 대한 정보를 차례대로 연결하여 저장\n",
+    "\n",
+    "graph = [[] for _ in range(3)]\n",
+    "\n",
+    "graph[0].append((1, 7))\n",
+    "graph[0].append((2, 5))\n",
+    "\n",
+    "graph[1].append((0, 7))\n",
+    "\n",
+    "graph[2].append((0, 5))\n",
+    "\n",
+    "print(graph)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "streaming-clone",
+   "metadata": {},
+   "source": [
+    "* 둘 중에 어느것이 더 좋을까??  \n",
+    "메모리 측면: 인접 리스트 방식이 효율적  \n",
+    "정보 탐색 속도 측면: 인접 행렬 방식이 효율적"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "blank-scheme",
+   "metadata": {},
+   "source": [
+    "* DFS 동작 과정:  \n",
+    "1) 탐색 시작 노드를 스택에 삽입하고 방문 처리  \n",
+    "2) 스택의 최상단 노드에 방문하지 않은 인접 노드가 있으면 그 인접 노드를 스택에 넣고 방문 처리를 한다. 방문하지 않은 인접 노드가 없으면 스택에서 최상단 노드를 꺼낸다.  \n",
+    "3) 2번의 과정을 더 이상 수행할 수 없을 때까지 반복한다."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "id": "double-roberts",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "1 2 7 6 8 3 4 5 "
+     ]
+    }
+   ],
+   "source": [
+    "# DFS 예제\n",
+    "def dfs(graph, v, visited):\n",
+    "    # 현재 노드를 방문 처리\n",
+    "    visited[v] = True\n",
+    "    print(v, end=' ')\n",
+    "    \n",
+    "    # 현재 노드와 연결된 다른 노드를 재귀적으로 방문\n",
+    "    for i in graph[v]:\n",
+    "        if not visited[i]:\n",
+    "            dfs(graph, i, visited)\n",
+    "            \n",
+    "# 각 노드가 연결된 정보를 리스트 자료형으로 표현(2차원 리스트)\n",
+    "graph = [\n",
+    "    [],\n",
+    "    [2,3,8],\n",
+    "    [1,7],\n",
+    "    [1,4,5],\n",
+    "    [3,5],\n",
+    "    [3,4],\n",
+    "    [7],\n",
+    "    [2,6,8],\n",
+    "    [1,7]\n",
+    "]\n",
+    "\n",
+    "# 각 노드가 방문된 정보를 리스트 자료형으로 표현(1차원 리스트)\n",
+    "visited = [False] * 9\n",
+    "\n",
+    "# 정의된 DFS 함수 호출\n",
+    "dfs(graph, 1, visited)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "id": "amateur-sherman",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[2, 3, 8]"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "graph[1]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "id": "worldwide-healing",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "2\n"
+     ]
+    }
+   ],
+   "source": [
+    "if not False:\n",
+    "    print(2)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "id": "empty-theory",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  },
+  {
+   "cell_type": "markdown",
+   "id": "played-express",
+   "metadata": {},
+   "source": [
+    "## Coding test  "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "hired-colorado",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def solution(numbers, target):\n",
+    "    answer = 0\n",
+    "    return answer"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "id": "loved-cassette",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import itertools\n",
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 77,
+   "id": "subtle-thing",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "numbers = [1,1,1,1,1]\n",
+    "target = 3\n",
+    "total = sum(numbers)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 78,
+   "id": "innocent-documentary",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "[(1,), (1,), (1,), (1,), (1,)]"
+      ]
+     },
+     "execution_count": 78,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "minus = list(itertools.combinations(numbers, 1))\n",
+    "minus"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 79,
+   "id": "surprised-pixel",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "1\n",
+      "1\n",
+      "1\n",
+      "1\n",
+      "1\n"
+     ]
+    }
+   ],
+   "source": [
+    "for num in minus:\n",
+    "    print(sum(num))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 80,
+   "id": "experimental-acting",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "5"
+      ]
+     },
+     "execution_count": 80,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "total"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 81,
+   "id": "metric-morris",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "a = sum(np.array(numbers) <= 5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 82,
+   "id": "tribal-brush",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "5"
+      ]
+     },
+     "execution_count": 82,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "a"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 83,
+   "id": "contained-currency",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "num (1,)\n",
+      "sub_total 4\n",
+      "num (1,)\n",
+      "sub_total 4\n",
+      "num (1,)\n",
+      "sub_total 4\n",
+      "num (1,)\n",
+      "sub_total 4\n",
+      "num (1,)\n",
+      "sub_total 4\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1, 1)\n",
+      "sub_total 1\n",
+      "num (1, 1, 1, 1)\n",
+      "sub_total 1\n",
+      "num (1, 1, 1, 1)\n",
+      "sub_total 1\n",
+      "num (1, 1, 1, 1)\n",
+      "sub_total 1\n",
+      "num (1, 1, 1, 1)\n",
+      "sub_total 1\n"
+     ]
+    }
+   ],
+   "source": [
+    "cnt = 0\n",
+    "for i in range(1,a):\n",
+    "    minus = list(itertools.combinations(numbers, i))\n",
+    "    for num in minus:\n",
+    "        print('num', num)\n",
+    "        sub_total = total - sum(num)\n",
+    "        \n",
+    "        print('sub_total', sub_total)\n",
+    "        if sub_total - sum(num) == target:\n",
+    "            cnt += 1"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 84,
+   "id": "handled-graphics",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "5"
+      ]
+     },
+     "execution_count": 84,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "cnt"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 88,
+   "id": "utility-parameter",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import itertools\n",
+    "import numpy as np\n",
+    "\n",
+    "def solution(numbers, target):\n",
+    "    total = sum(numbers)\n",
+    "    \n",
+    "    a = sum(np.array(numbers) <= target)\n",
+    "    \n",
+    "    cnt = 0\n",
+    "    for i in range(1,a):\n",
+    "        minus = list(itertools.combinations(numbers, i))\n",
+    "        for num in minus:\n",
+    "            sub_total = total - sum(num)\n",
+    "            if sub_total - sum(num) == target:\n",
+    "                cnt += 1\n",
+    "    \n",
+    "    return cnt "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 89,
+   "id": "abroad-sherman",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "num (1,)\n",
+      "sub_total 4\n",
+      "num (1,)\n",
+      "sub_total 4\n",
+      "num (1,)\n",
+      "sub_total 4\n",
+      "num (1,)\n",
+      "sub_total 4\n",
+      "num (1,)\n",
+      "sub_total 4\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1)\n",
+      "sub_total 3\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1)\n",
+      "sub_total 2\n",
+      "num (1, 1, 1, 1)\n",
+      "sub_total 1\n",
+      "num (1, 1, 1, 1)\n",
+      "sub_total 1\n",
+      "num (1, 1, 1, 1)\n",
+      "sub_total 1\n",
+      "num (1, 1, 1, 1)\n",
+      "sub_total 1\n",
+      "num (1, 1, 1, 1)\n",
+      "sub_total 1\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "5"
+      ]
+     },
+     "execution_count": 89,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "solution([1,1,1,1,1], 3)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "overhead-mapping",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.8.8"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
